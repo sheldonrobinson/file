@@ -25,7 +25,7 @@
  * SUCH DAMAGE.
  */
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
 #include <shlwapi.h>
 #endif
@@ -39,7 +39,9 @@ FILE_RCSID("@(#)$File: magic.c,v 1.124 2024/12/08 19:00:59 christos Exp $")
 #include "magic.h"
 
 #include <stdlib.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <string.h>
 #ifdef QUICK
 #include <sys/mman.h>
@@ -81,7 +83,7 @@ file_private const char *file_or_fd(struct magic_set *, const char *, int);
 #define	STDIN_FILENO	0
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
 /* HINSTANCE of this shared library. Needed for get_default_magic() */
 static HINSTANCE _w32_dll_instance = NULL;
 
@@ -178,7 +180,7 @@ get_default_magic(void)
 	static char *default_magic;
 	char *home, *hmagicpath;
 
-#ifndef WIN32
+#ifndef _WIN32
 	struct stat st;
 
 	if (default_magic) {
@@ -277,7 +279,7 @@ unreadable_info(struct magic_set *ms, mode_t md, const char *file)
 		if (access(file, W_OK) == 0)
 			if (file_printf(ms, "writable, ") == -1)
 				return -1;
-#ifndef WIN32
+#ifndef _WIN32
 		if (access(file, X_OK) == 0)
 			if (file_printf(ms, "executable, ") == -1)
 				return -1;
@@ -449,7 +451,7 @@ file_or_fd(struct magic_set *ms, const char *inname, int fd)
 		goto done;
 	}
 
-#ifdef WIN32
+#ifdef _WIN32
 	/* Place stdin in binary mode, so EOF (Ctrl+Z) doesn't stop early. */
 	if (fd == STDIN_FILENO)
 		_setmode(STDIN_FILENO, O_BINARY);
@@ -459,7 +461,7 @@ file_or_fd(struct magic_set *ms, const char *inname, int fd)
 		errno = 0;
 		if ((fd = open(inname, flags)) < 0) {
 			okstat = stat(inname, &sb) == 0;
-#ifdef WIN32
+#ifdef _WIN32
 			/*
 			 * Can't stat, can't open.  It may have been opened in
 			 * fsmagic, so if the user doesn't have read permission,
@@ -515,7 +517,7 @@ file_or_fd(struct magic_set *ms, const char *inname, int fd)
 	} else if (fd != -1) {
 		/* Windows refuses to read from a big console buffer. */
 		size_t howmany =
-#ifdef WIN32
+#ifdef _WIN32
 		    _isatty(fd) ? 8 * 1024 :
 #endif
 		    ms->bytes_max;

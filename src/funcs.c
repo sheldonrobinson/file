@@ -934,7 +934,7 @@ file_print_guid(char *str, size_t len, const uint64_t *guid)
 	const struct guid *g = CAST(const struct guid *,
 	    CAST(const void *, guid));
 
-#ifndef WIN32
+#ifndef _WIN32
 	return snprintf(str, len, "%.8X-%.4hX-%.4hX-%.2hhX%.2hhX-"
 	    "%.2hhX%.2hhX%.2hhX%.2hhX%.2hhX%.2hhX",
 	    g->data1, g->data2, g->data3, g->data4[0], g->data4[1],
@@ -949,10 +949,11 @@ file_print_guid(char *str, size_t len, const uint64_t *guid)
 #endif
 }
 
+
 file_protected int
 file_pipe_closexec(int *fds)
 {
-#ifdef __MINGW32__
+#if defined(__MINGW32__) || defined(_WIN32)
 	return 0;
 #elif defined(HAVE_PIPE2)
 	return pipe2(fds, O_CLOEXEC);

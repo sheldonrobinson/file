@@ -79,15 +79,26 @@
 #include <stdio.h>	/* Include that here, to make sure __P gets defined */
 #include <errno.h>
 #include <fcntl.h>	/* For open and flags */
-#include <regex.h>
+#include <tre/regex.h>
 #include <time.h>
 #include <sys/types.h>
-#ifndef WIN32
+#ifndef _WIN32
 #include <sys/param.h>
+#endif
+#ifdef _MSC_VER
+#include <io.h>
+#define R_OK 4
+#define W_OK 2
+#define X_OK R_OK
+#define F_OK 0
+#define STDIN_FILENO _fileno(stdin)
+#define STDOUT_FILENO _fileno(stdout)
+#define STDERR_FILENO _fileno(stderr)
 #endif
 /* Do this here and now, because struct stat gets re-defined on solaris */
 #include <sys/stat.h>
 #include <stdarg.h>
+#include <dirent.h>
 #include <locale.h>
 #if defined(HAVE_XLOCALE_H)
 #include <xlocale.h>
@@ -99,7 +110,7 @@
 #define MAGIC "/etc/magic"
 #endif
 
-#if defined(__EMX__) || defined (WIN32)
+#if defined(__EMX__) || defined (_WIN32)
 #define PATHSEP	';'
 #else
 #define PATHSEP	':'
@@ -108,7 +119,7 @@
 #define file_private static
 
 #if HAVE_VISIBILITY
-# if defined(WIN32)
+# if defined(_WIN32)
 #  define file_public  __declspec(dllexport)
 #  ifndef file_protected
 #   define file_protected
@@ -466,6 +477,12 @@ struct cont {
 };
 
 #define MAGIC_SETS	2
+
+#ifdef _MSC_VER
+#include <BaseTsd.h>
+typedef int mode_t;
+typedef SSIZE_T ssize_t;
+#endif
 
 struct magic_set {
 	struct mlist *mlist[MAGIC_SETS];	/* list of regular entries */

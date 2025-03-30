@@ -31,7 +31,9 @@ FILE_RCSID("@(#)$File: buffer.c,v 1.13 2023/07/02 12:48:39 christos Exp $")
 #endif	/* lint */
 
 #include "magic.h"
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <string.h>
 #include <stdlib.h>
 #include <sys/stat.h>

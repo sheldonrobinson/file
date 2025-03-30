@@ -39,7 +39,9 @@ FILE_RCSID("@(#)$File: memtest.c,v 1.6 2022/09/24 20:30:13 christos Exp $")
 #include <stdlib.h>
 #include <err.h>
 #include <fcntl.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <dlfcn.h>
 #include <magic.h>
 

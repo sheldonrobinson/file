@@ -38,7 +38,6 @@ FILE_RCSID("@(#)$File: file.c,v 1.217 2024/09/29 16:49:25 christos Exp $")
 #include "magic.h"
 
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
 #ifdef RESTORE_TIME
 # if (__COHERENT__ >= 0x420)
@@ -213,6 +212,12 @@ main(int argc, char *argv[])
 #ifdef __EMX__
 	/* sh-like wildcard expansion! Shouldn't hurt at least ... */
 	_wildcard(&argc, &argv);
+#endif
+
+#ifdef _WIN32
+	if ((progname = strrchr(argv[0], '\\')) != NULL)
+		progname++;
+	else
 #endif
 
 	if ((progname = strrchr(argv[0], '/')) != NULL)

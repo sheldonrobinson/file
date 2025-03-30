@@ -31,7 +31,9 @@ FILE_RCSID("@(#)$File: readcdf.c,v 1.80 2023/01/24 20:13:40 christos Exp $")
 
 #include <assert.h>
 #include <stdlib.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <string.h>
 #include <time.h>
 #include <ctype.h>
@@ -236,7 +238,7 @@ cdf_file_property_info(struct magic_set *ms, const cdf_property_info_t *info,
 				} else {
 					char *c, *ec;
 					cdf_timestamp_to_timespec(&ts, tp);
-					c = cdf_ctime(&ts.tv_sec, tbuf);
+					c = cdf_ctime((time_t*)&ts.tv_sec, tbuf);
 					if (c != NULL &&
 					    (ec = strchr(c, '\n')) != NULL)
 						*ec = '\0';
